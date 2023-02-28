@@ -4,6 +4,7 @@ const proddata = require("./DummyData/data.json");
 const { ProductModel } = require("./Model/product.Model");
 
 const { productRouter } = require("./Route/product.route");
+const { errorMiddleware } = require("./Middleware/error");
 require("dotenv").config();
 
 const app = express();
@@ -21,6 +22,10 @@ app.get("", (req, res) => {
   res.send("welcome");
 });
 app.use("/api/v1/", productRouter);
+
+//error middleware
+
+app.use(errorMiddleware);
 app.listen(port, async () => {
   try {
     await connect;

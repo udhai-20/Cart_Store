@@ -1,5 +1,7 @@
 const { request } = require("express");
 const { ProductModel } = require("../Model/product.Model");
+const { ErrorHandler } = require("../utils/errorhandler");
+const { asynMiddleware } = require("../Middleware/catchAsyncError");
 //get all products
 const getProducts = async (req, res) => {
   try {
@@ -17,30 +19,21 @@ const getProducts = async (req, res) => {
   }
 };
 //create products
-const createProducts = async (req, res) => {
-  try {
-    const product = await ProductModel.create(req.body);
-    res.status(201).json({
-      sucess: true,
-      product,
-    });
-  } catch (err) {
-    res.status(500).json({
-      sucess: false,
-      menubar: err.message,
-    });
-  }
-};
+const createProducts = asynMiddleware(async (req, res) => {
+  const product = await ProductModel.create(req.body);
+  res.status(201).json({
+    sucess: true,
+    product,
+  });
+});
 //get single product
-const getSingleProduct = async (req, res) => {
+const getSingleProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
     const product = await ProductModel.findById(id);
+    console.log("  product:", product);
     if (!product) {
-      res.status(404).json({
-        sucess: false,
-        message: "Id Not Found",
-      });
+      return next(new ErrorHandler("Product not found", 400));
     }
     res.status(201).json({
       sucess: true,
@@ -79,10 +72,10 @@ const updateProduct = async (req, res) => {
       });
     }
   } catch (e) {
-    // res.status(500).json({
-    //   sucess: false,
-    //   message: e.message,
-    // });
+    res.status(500).json({
+      sucess: false,
+      message: e.message,
+    });
   }
 };
 //delete Product
