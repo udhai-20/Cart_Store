@@ -27,26 +27,18 @@ const createProducts = asynMiddleware(async (req, res) => {
   });
 });
 //get single product
-const getSingleProduct = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const product = await ProductModel.findById(id);
-    console.log("  product:", product);
-    if (!product) {
-      return next(new ErrorHandler("Product not found", 400));
-    }
-    res.status(201).json({
-      sucess: true,
-      product,
-    });
-  } catch (e) {
-    res.status(404).json({
-      sucess: false,
-      message: e.message,
-    });
-    // res.status(500).send(e);
+const getSingleProduct = asynMiddleware(async (req, res, next) => {
+  const { id } = req.params;
+  const product = await ProductModel.findById(id);
+  console.log("product:", product);
+  if (!product) {
+    return next(new ErrorHandler("Product not found", 404));
   }
-};
+  res.status(201).json({
+    sucess: true,
+    product,
+  });
+});
 //update product
 const updateProduct = async (req, res) => {
   try {
