@@ -2,6 +2,7 @@ const { request } = require("express");
 const { ProductModel } = require("../Model/product.Model");
 const { ErrorHandler } = require("../utils/errorhandler");
 const { asynMiddleware } = require("../Middleware/catchAsyncError");
+const { APIFeatures } = require("../utils/apiFeature");
 //get all products
 const getProducts = async (req, res) => {
   try {
