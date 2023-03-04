@@ -2,9 +2,10 @@ const express = require("express");
 const { connect } = require("./config/db");
 const proddata = require("./DummyData/data.json");
 const { ProductModel } = require("./Model/product.Model");
-
+const cookieParser = require("cookie-parser");
 const { productRouter } = require("./Route/product.route");
 const { errorMiddleware } = require("./Middleware/error");
+const { authRouter } = require("./Route/auth.route");
 require("dotenv").config();
 const app = express();
 //port
@@ -13,13 +14,16 @@ const port = process.env.PORT || 5001;
 const serverphases = process.env.NODE_ENV;
 //middleware
 app.use(express.json());
+app.use(cookieParser());
 //weserver pport
 //get products
 app.get("", (req, res) => {
   res.send("welcome");
 });
 app.use("/api/v1/", productRouter);
+//auth router
 
+app.use("/api/v1/", authRouter);
 //error middleware
 app.use(errorMiddleware);
 

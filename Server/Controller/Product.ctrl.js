@@ -4,21 +4,21 @@ const { ErrorHandler } = require("../utils/errorhandler");
 const { asynMiddleware } = require("../Middleware/catchAsyncError");
 const { APIFeatures } = require("../utils/apiFeature");
 //get all products
-const getProducts = async (req, res) => {
-  try {
-    const product = await ProductModel.find();
-    res.status(200).json({
-      sucess: true,
-      count: product.length,
-      product,
-    });
-  } catch (e) {
-    req.status(404).json({
-      sucess: false,
-      message: e.message,
-    });
-  }
-};
+const getProducts = asynMiddleware(async (req, res, next) => {
+  const resPerPage = 2;
+  const apiFeature = new APIFeatures(ProductModel.find(), req.query)
+    .search()
+    .filter()
+    .paginate(resPerPage);
+  // console.log("   apiFeature:", apiFeature);
+  const product = await apiFeature.query;
+  // console.log("apiFeature", product);
+  res.status(200).json({
+    sucess: true,
+    count: product.length,
+    product,
+  });
+});
 //create products
 const createProducts = asynMiddleware(async (req, res) => {
   const product = await ProductModel.create(req.body);

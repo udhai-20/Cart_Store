@@ -6,9 +6,11 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../Controller/Product.ctrl");
+const { isAuthenticatedUser } = require("../Middleware/authenticate");
+
 const productRouter = express.Router();
 //get all
-productRouter.route("/products").get(getProducts);
+productRouter.route("/products").get(isAuthenticatedUser, getProducts);
 //get single
 productRouter.route("/products/:id").get(getSingleProduct);
 //create
