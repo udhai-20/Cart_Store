@@ -18,3 +18,4 @@ productRouter.route("/create-product").post(createProducts);
 //update patch
 productRouter.route("/products/:id").put(updateProduct).delete(deleteProduct);
 module.exports = { productRouter };
+// as
